@@ -25,10 +25,15 @@ def write_frame_data(csv_filename,frame_number, bbox, landmarks, headpose):
  
     :param frame_number: The frame index (integer)
     :param landmarks: List of 68 (x, y) tuples
-    :param headpose: Tuple (pitch, yaw, roll)
+    :param headpose: Tuple (yaw, pitch, roll)
     """
-    # Flatten the landmarks list [(x1, y1), (x2, y2), ...] -> [x1, y1, x2, y2, ..., x68, y68]
-    landmark_data = [coord for point in landmarks for coord in point]
+    
+    # Flatten the landmarks list [(x1, y1), (x2, y2), ...] -> [x1, x2, x3, .... x68, y1, y2, ...., y68]
+    landmark_data = []
+    for i in landmarks:    
+        landmark_data.append(i[0])
+    for i in landmarks:    
+        landmark_data.append(i[1])
     
     # Combine frame number, landmarks, and headpose
     row = [frame_number] + list(bbox) + landmark_data + list(headpose)
@@ -41,7 +46,7 @@ def write_frame_data(csv_filename,frame_number, bbox, landmarks, headpose):
 # Initialize CSV file with a header
 def initialize_csv(csv_filename):
     """Creates the CSV file with the header if it doesn't exist."""
-    header = ["Frame"] + ["Bbox_x", "Bbox_y", "Bbox_w", "Bbox_h"] + [f"x{i+1}" for i in range(68)] + [f"y{i+1}" for i in range(68)] + ["Pitch", "Yaw", "Roll"]
+    header = ["Frame"] + ["Bbox_x", "Bbox_y", "Bbox_w", "Bbox_h"] + [f"x{i+1}" for i in range(68)] + [f"y{i+1}" for i in range(68)] + ["Yaw", "Pitch", "Roll"]
     
     with open(csv_filename, mode='w', newline='') as file:
         writer = csv.writer(file)
@@ -130,7 +135,7 @@ def video_app(input_name, spiga_dataset=None, tracker=None, fps=30, save=False,
             if ret:
                 # Process frame
                 objId = faces_analyzer.process_frame(frame)
-                # write_frame_data(csvName,i,output_row["bbox"],output_row["landmarks"],output_row["headpose"])
+                write_frame_data(csvName,i,objId[0].bbox[:4], objId[0].landmarks,objId[0].headpose[:3])
                 # Show results
                 key = viewer.process_image(frame, drawers=[faces_analyzer], show_attributes=plot)
                 if key:

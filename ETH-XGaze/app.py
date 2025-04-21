@@ -191,7 +191,7 @@ if __name__ == '__main__':
         if not os.path.isfile(pre_trained_model_path):
             print('the pre-trained gaze estimation model does not exist.')
             exit(0)
-        ckpt = torch.load(pre_trained_model_path, map_location=torch.device('cpu'))
+        ckpt = torch.load(pre_trained_model_path)
         model.load_state_dict(ckpt['model_state'], strict=True)
         model.eval()
         input_var = img_normalized[:, :, [2, 1, 0]]

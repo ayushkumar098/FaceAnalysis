@@ -15,7 +15,7 @@ class RetinaSortTracker(tracker.Tracker):
     def __init__(self, config=cfg.cfg_retinasort):
         super().__init__()
 
-        self.detector = retinaface.RetinaFaceDetector(model=config['retina']['model_name'],device = 'cpu',
+        self.detector = retinaface.RetinaFaceDetector(model=config['retina']['model_name'],
                                                       extra_features=config['retina']['extra_features'],
                                                       cfg_postreat=config['retina']['postreat'])
 
